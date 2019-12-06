@@ -1,0 +1,14 @@
+.class
+*.class
+*.semanticdb
+.idea
+.metals
+command
+target
+project/target
+project/.bloop
+test
+testExport
+tmp.csv
+.vscode
+docker/Dockerfile

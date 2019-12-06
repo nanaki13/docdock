@@ -1,0 +1,312 @@
+{
+    "version" : "1.1.2",
+    "project" : {
+        "name" : "root-test",
+        "directory" : "I:\\work\\test\\local-data",
+        "sources" : [
+            "I:\\work\\test\\local-data\\src\\test\\scala-2.13",
+            "I:\\work\\test\\local-data\\src\\test\\scala",
+            "I:\\work\\test\\local-data\\src\\test\\java",
+            "I:\\work\\test\\local-data\\target\\scala-2.13\\src_managed\\test"
+        ],
+        "dependencies" : [
+            "root"
+        ],
+        "classpath" : [
+            "I:\\work\\test\\local-data\\.bloop\\root\\scala-2.13\\classes",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-library\\jars\\scala-library-2.13.1.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http_2.13\\jars\\akka-http_2.13-10.1.10.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http-core_2.13\\jars\\akka-http-core_2.13-10.1.10.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-parsing_2.13\\jars\\akka-parsing_2.13-10.1.10.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-stream_2.13\\jars\\akka-stream_2.13-2.5.23.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-actor_2.13\\jars\\akka-actor_2.13-2.5.23.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\config\\bundles\\config-1.4.0.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-java8-compat_2.13\\jars\\scala-java8-compat_2.13-0.9.0.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-protobuf_2.13\\jars\\akka-protobuf_2.13-2.5.23.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\org.reactivestreams\\reactive-streams\\jars\\reactive-streams-1.0.2.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\ssl-config-core_2.13\\bundles\\ssl-config-core_2.13-0.4.0.jar",
+            "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-parser-combinators_2.13\\bundles\\scala-parser-combinators_2.13-1.1.2.jar"
+        ],
+        "out" : "I:\\work\\test\\local-data\\.bloop\\root",
+        "classesDir" : "I:\\work\\test\\local-data\\.bloop\\root\\scala-2.13\\test-classes",
+        "resources" : [
+            "I:\\work\\test\\local-data\\src\\test\\resources",
+            "I:\\work\\test\\local-data\\target\\scala-2.13\\resource_managed\\test"
+        ],
+        "scala" : {
+            "organization" : "org.scala-lang",
+            "name" : "scala-compiler",
+            "version" : "2.13.1",
+            "options" : [
+                "-P:semanticdb:synthetics:on",
+                "-P:semanticdb:failures:warning",
+                "-P:semanticdb:sourceroot:I:\\work\\test\\local-data",
+                "-Yrangepos",
+                "-Xplugin-require:semanticdb",
+                "-Xplugin:C:\\Users\\Jonathan\\.ivy2\\cache\\org.scalameta\\semanticdb-scalac_2.13.1\\jars\\semanticdb-scalac_2.13.1-4.2.3.jar"
+            ],
+            "jars" : [
+                "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-compiler\\jars\\scala-compiler-2.13.1.jar",
+                "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-library\\jars\\scala-library-2.13.1.jar",
+                "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-reflect\\jars\\scala-reflect-2.13.1.jar",
+                "C:\\Users\\Jonathan\\.ivy2\\cache\\jline\\jline\\jars\\jline-2.14.6.jar",
+                "C:\\Users\\Jonathan\\.ivy2\\cache\\org.fusesource.jansi\\jansi\\jars\\jansi-1.12.jar"
+            ],
+            "setup" : {
+                "order" : "mixed",
+                "addLibraryToBootClasspath" : true,
+                "addCompilerToClasspath" : false,
+                "addExtraJarsToClasspath" : false,
+                "manageBootClasspath" : true,
+                "filterLibraryFromClasspath" : true
+            }
+        },
+        "java" : {
+            "options" : [
+            ]
+        },
+        "test" : {
+            "frameworks" : [
+                {
+                    "names" : [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names" : [
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names" : [
+                        "org.specs.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names" : [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names" : [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                }
+            ],
+            "options" : {
+                "excludes" : [
+                ],
+                "arguments" : [
+                ]
+            }
+        },
+        "platform" : {
+            "name" : "jvm",
+            "config" : {
+                "home" : "I:\\work\\jdk\\jdk-11.0.4+11-jre",
+                "options" : [
+                ]
+            },
+            "mainClass" : [
+            ]
+        },
+        "resolution" : {
+            "modules" : [
+                {
+                    "organization" : "org.scala-lang",
+                    "name" : "scala-library",
+                    "version" : "2.13.1",
+                    "artifacts" : [
+                        {
+                            "name" : "scala-library",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-library\\jars\\scala-library-2.13.1.jar"
+                        },
+                        {
+                            "name" : "scala-library",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang\\scala-library\\srcs\\scala-library-2.13.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-http_2.13",
+                    "version" : "10.1.10",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-http_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http_2.13\\jars\\akka-http_2.13-10.1.10.jar"
+                        },
+                        {
+                            "name" : "akka-http_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http_2.13\\srcs\\akka-http_2.13-10.1.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-http-core_2.13",
+                    "version" : "10.1.10",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-http-core_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http-core_2.13\\jars\\akka-http-core_2.13-10.1.10.jar"
+                        },
+                        {
+                            "name" : "akka-http-core_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-http-core_2.13\\srcs\\akka-http-core_2.13-10.1.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-parsing_2.13",
+                    "version" : "10.1.10",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-parsing_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-parsing_2.13\\jars\\akka-parsing_2.13-10.1.10.jar"
+                        },
+                        {
+                            "name" : "akka-parsing_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-parsing_2.13\\srcs\\akka-parsing_2.13-10.1.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-stream_2.13",
+                    "version" : "2.5.23",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-stream_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-stream_2.13\\jars\\akka-stream_2.13-2.5.23.jar"
+                        },
+                        {
+                            "name" : "akka-stream_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-stream_2.13\\srcs\\akka-stream_2.13-2.5.23-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-actor_2.13",
+                    "version" : "2.5.23",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-actor_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-actor_2.13\\jars\\akka-actor_2.13-2.5.23.jar"
+                        },
+                        {
+                            "name" : "akka-actor_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-actor_2.13\\srcs\\akka-actor_2.13-2.5.23-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "org.scala-lang.modules",
+                    "name" : "scala-java8-compat_2.13",
+                    "version" : "0.9.0",
+                    "artifacts" : [
+                        {
+                            "name" : "scala-java8-compat_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-java8-compat_2.13\\jars\\scala-java8-compat_2.13-0.9.0.jar"
+                        },
+                        {
+                            "name" : "scala-java8-compat_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-java8-compat_2.13\\srcs\\scala-java8-compat_2.13-0.9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe.akka",
+                    "name" : "akka-protobuf_2.13",
+                    "version" : "2.5.23",
+                    "artifacts" : [
+                        {
+                            "name" : "akka-protobuf_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-protobuf_2.13\\jars\\akka-protobuf_2.13-2.5.23.jar"
+                        },
+                        {
+                            "name" : "akka-protobuf_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe.akka\\akka-protobuf_2.13\\srcs\\akka-protobuf_2.13-2.5.23-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "org.reactivestreams",
+                    "name" : "reactive-streams",
+                    "version" : "1.0.2",
+                    "artifacts" : [
+                        {
+                            "name" : "reactive-streams",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.reactivestreams\\reactive-streams\\jars\\reactive-streams-1.0.2.jar"
+                        },
+                        {
+                            "name" : "reactive-streams",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.reactivestreams\\reactive-streams\\srcs\\reactive-streams-1.0.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe",
+                    "name" : "ssl-config-core_2.13",
+                    "version" : "0.4.0",
+                    "artifacts" : [
+                        {
+                            "name" : "ssl-config-core_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\ssl-config-core_2.13\\bundles\\ssl-config-core_2.13-0.4.0.jar"
+                        },
+                        {
+                            "name" : "ssl-config-core_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\ssl-config-core_2.13\\srcs\\ssl-config-core_2.13-0.4.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "org.scala-lang.modules",
+                    "name" : "scala-parser-combinators_2.13",
+                    "version" : "1.1.2",
+                    "artifacts" : [
+                        {
+                            "name" : "scala-parser-combinators_2.13",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-parser-combinators_2.13\\bundles\\scala-parser-combinators_2.13-1.1.2.jar"
+                        },
+                        {
+                            "name" : "scala-parser-combinators_2.13",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\org.scala-lang.modules\\scala-parser-combinators_2.13\\srcs\\scala-parser-combinators_2.13-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization" : "com.typesafe",
+                    "name" : "config",
+                    "version" : "1.4.0",
+                    "artifacts" : [
+                        {
+                            "name" : "config",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\config\\bundles\\config-1.4.0.jar"
+                        },
+                        {
+                            "name" : "config",
+                            "classifier" : "sources",
+                            "path" : "C:\\Users\\Jonathan\\.ivy2\\cache\\com.typesafe\\config\\srcs\\config-1.4.0-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
