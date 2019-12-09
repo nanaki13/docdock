@@ -2,15 +2,15 @@ package bon.jo
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.{HttpApp, Route}
+import akka.http.scaladsl.server.{Directive0, Directive1, HttpApp, Route}
 import bon.jo.Utils.Configured
-import bon.jo.commandapi.{CommandService, InMemmoryCommandMemo, TemplateHtml, View}
+import bon.jo.commandapi.{CommandMemoElement, CommandMemoElements, CommandService, InMemmoryCommandMemo, JsonOut, TemplateHtml, View}
 import bon.jo.html._
 import bon.jo.model._
 
 import scala.collection.immutable
 
-object WebServer extends HttpApp with App with Configured {
+object WebServer extends HttpApp with App with Configured with JsonOut with CORSHandler {
 
   val basePath = getBasePath
   val command = "command"
@@ -122,7 +122,7 @@ object WebServer extends HttpApp with App with Configured {
 
 
   val manageRoute = pathPrefix(basePath / manage) {
-    concat(routeMemo, routeContniarPs, routeImageLs, {
+    concat( corsHandler( routeMemo), routeContniarPs, routeImageLs, {
 
       done(templates.manage())
     })
@@ -134,17 +134,36 @@ object WebServer extends HttpApp with App with Configured {
     }
 
   }
+ def htmlMemo: Route =  {
+   implicit val dsl = new htmlPagedsl
+   memo.allAsTextLink.foreach { e =>
+     val d = html"div"
 
+     dsl.link(e._1, e._2)(d)
+
+   }
+   done(dsl)
+ }
+
+  def addId(c : (String,List[String])): (Int,String,List[String])={
+    (c._2.hashCode,c._1,c._2)
+  }
   def routeMemo: Route = {
     path(memoString) {
-      implicit val dsl = new htmlPagedsl
-      memo.allAsTextLink.foreach { e =>
-        val d = html"div"
+      parameters('format.?){format =>{
+          format match {
+            case Some(fo) => if (fo == "json"){
+            complete( CommandMemoElements( memo.all.map(addId).map(CommandMemoElement.tupled).toList))
+            }else{
+              htmlMemo
+            }
+            case _ => {
+              htmlMemo
+            }
+          }
+      }}
 
-        dsl.link(e._1, e._2)(d)
 
-      }
-      done(dsl)
     }
   }
 
@@ -199,4 +218,36 @@ object WebServer extends HttpApp with App with Configured {
 }
 
 
+trait CORSHandler{
+  import akka.http.scaladsl.model.HttpMethods._
+  import akka.http.scaladsl.model.headers._
+  import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
+  import akka.http.scaladsl.server.Directives._
+  import akka.http.scaladsl.server.directives.RouteDirectives.complete
+  import akka.http.scaladsl.server.{Directive0, Route}
 
+  import scala.concurrent.duration._
+  private val corsResponseHeaders = List(
+     `Access-Control-Allow-Origin`.*,
+    `Access-Control-Allow-Credentials`(true),
+    `Access-Control-Allow-Headers`("Authorization",
+      "Content-Type", "X-Requested-With")
+  )
+  //this directive adds access control headers to normal responses
+  private def addAccessControlHeaders: Directive0 = {
+    respondWithHeaders(corsResponseHeaders)
+  }
+  //this handles preflight OPTIONS requests.
+  private def preflightRequestHandler: Route = options {
+    complete(HttpResponse(StatusCodes.OK).
+      withHeaders(`Access-Control-Allow-Methods`(OPTIONS, POST, PUT, GET, DELETE)))
+  }
+  // Wrap the Route with this method to enable adding of CORS headers
+  def corsHandler(r: Route): Route = addAccessControlHeaders {
+    preflightRequestHandler ~ r
+  }
+  // Helper method to add CORS headers to HttpResponse
+  // preventing duplication of CORS headers across code
+  def addCORSHeaders(response: HttpResponse):HttpResponse =
+    response.withHeaders(corsResponseHeaders)
+}

@@ -13,7 +13,8 @@ trait CommandMemo {
   def all : Iterator[(String,List[String])]
   def allAsTextLink : Iterator[(String,String)] = all.map(z=> (z._1,CommandMemo.getAsLink(z._2)))
 }
-
+case class CommandMemoElement(id:Int,name : String,cmd : List[String])
+case class CommandMemoElements(elements : List[CommandMemoElement])
 object CommandMemo{
   def getAsLink(name : List[String]) = {
     val cmdBase = name.head
