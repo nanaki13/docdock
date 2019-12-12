@@ -4,11 +4,14 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.{Directive0, Directive1, HttpApp, Route}
 import bon.jo.Utils.Configured
-import bon.jo.commandapi.{CommandMemoElement, CommandMemoElements, CommandService, InMemmoryCommandMemo, JsonOut, TemplateHtml, View}
+import bon.jo.commandapi.{CommandMemoElement, CommandMemoElements, CommandService, FileCommandMemo, InMemmoryCommandMemo, JsonOut, TemplateHtml, View}
 import bon.jo.html._
 import bon.jo.model._
 
 import scala.collection.immutable
+import scala.concurrent.Future
+import scala.util.Success
+import scala.concurrent.duration._
 
 object WebServer extends HttpApp with App with Configured with JsonOut with CORSHandler {
 
@@ -31,13 +34,14 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
   val anayser = DockerAnalyse(List("--help"))
   val base: List[Command] = anayser.getCommand
 
-  val memo = InMemmoryCommandMemo()
+  val memo = new FileCommandMemo()
   implicit val m = Some(memo)
 
   //val base = DockerCommands.all.values.toList
   val templates: View[htmlPagedsl] = new TemplateHtml(base)
+
   //def sideMenu = templates.sideMenu
-  val routeListCmdRunAndInfo =
+  def routeListCmdRunAndInfo: List[Route] =
     base.map { c =>
       pathPrefix(basePath / command / c.cmd) {
         concat(
@@ -105,6 +109,8 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
                     CommandArg(params("containers"))
                   } else if (c.haveName) {
                     CommandArg(params("name"))
+                  } else if (c.havePath) {
+                    CommandArg(params("path"))
                   } else {
                     CommandArg.empty
                   }
@@ -121,8 +127,8 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
     }
 
 
-  val manageRoute = pathPrefix(basePath / manage) {
-    concat( corsHandler( routeMemo), routeContniarPs, routeImageLs, {
+  def manageRoute: Route = pathPrefix(basePath / manage) {
+    concat(corsHandler(routeMemo), routeContniarPs, routeImageLs, {
 
       done(templates.manage())
     })
@@ -134,34 +140,51 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
     }
 
   }
- def htmlMemo: Route =  {
-   implicit val dsl = new htmlPagedsl
-   memo.allAsTextLink.foreach { e =>
-     val d = html"div"
 
-     dsl.link(e._1, e._2)(d)
+  def htmlMemo(f: ((String, List[String])) => Boolean): Route = {
+    implicit val dsl = new htmlPagedsl
+    memo.allAsTextLink(f).foreach { e =>
+      val d = html"div"
 
-   }
-   done(dsl)
- }
+      dsl.link(e._1, e._2)(d)
 
-  def addId(c : (String,List[String])): (Int,String,List[String])={
-    (c._2.hashCode,c._1,c._2)
+    }
+    done(dsl)
   }
+
+  def addId(c: (String, List[String])): (Int, String, List[String]) = {
+    (c._2.hashCode, c._1, c._2)
+  }
+
   def routeMemo: Route = {
     path(memoString) {
-      parameters('format.?){format =>{
-          format match {
-            case Some(fo) => if (fo == "json"){
-            complete( CommandMemoElements( memo.all.map(addId).map(CommandMemoElement.tupled).toList))
-            }else{
-              htmlMemo
-            }
-            case _ => {
-              htmlMemo
-            }
+      parameters('format.?, 'name.?, 'newName.?) { (format, name, newName) => {
+        var f = name match {
+          case Some(value) => (e: (String, List[String])) => e._1 == value
+          case None => (_: (String, List[String])) => true
+        }
+        var mem = memo.allMemo.filter(f).toList
+        newName match {
+          case Some(n) => if (name.isDefined) {
+            val m = memo.saveMemo(n, mem.head._2)
+            val oldF = f
+            f = (e: (String, List[String])) => oldF(e) || e._1 == n
+            mem = m :: mem
           }
-      }}
+          case None =>
+        }
+        format match {
+          case Some(fo) => if (fo == "json") {
+            complete(CommandMemoElements(mem.map(addId).map(CommandMemoElement.tupled)))
+          } else {
+            htmlMemo(f)
+          }
+          case None => {
+            htmlMemo(f)
+          }
+        }
+      }
+      }
 
 
     }
@@ -183,7 +206,8 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
 
   def done(e: htmlPagedsl) = complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, e.template.toHTMLString))
 
-  val routeListCommand = path(basePath / command) {
+
+  def routeListCommand: Route = path(basePath / command) {
     val dsl = new htmlPagedsl()
 
     implicit val rt = dsl.cont
@@ -194,7 +218,20 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
 
     done(dsl)
   }
-  val routeList = reouteTemplateScala :: manageRoute :: (routeListCommand :: routeListCmdRunAndInfo)
+
+  def stopRoute = path("stop") {
+    implicit val ex = systemReference.get().dispatcher
+    Future {
+      memo.close()
+      binding() match {
+        case Success(value) => value.terminate(hardDeadline = 3.seconds).map(e => System.exit(0))
+      }
+    }
+    complete("ok")
+  }
+
+
+  val routeList: List[Route] = stopRoute :: reouteTemplateScala :: manageRoute :: routeListCommand :: routeListCmdRunAndInfo
 
   override def routes: Route = {
     concat(routeList: _ *)
@@ -205,6 +242,8 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
     super.postHttpBinding(binding)
     val sys = systemReference.get()
     sys.log.info(s"Running on [${sys.name}] actor system")
+
+
   }
 
   override protected def postHttpBindingFailure(cause: Throwable): Unit = {
@@ -218,7 +257,8 @@ object WebServer extends HttpApp with App with Configured with JsonOut with CORS
 }
 
 
-trait CORSHandler{
+trait CORSHandler {
+
   import akka.http.scaladsl.model.HttpMethods._
   import akka.http.scaladsl.model.headers._
   import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
@@ -227,27 +267,32 @@ trait CORSHandler{
   import akka.http.scaladsl.server.{Directive0, Route}
 
   import scala.concurrent.duration._
+
   private val corsResponseHeaders = List(
-     `Access-Control-Allow-Origin`.*,
+    `Access-Control-Allow-Origin`.*,
     `Access-Control-Allow-Credentials`(true),
     `Access-Control-Allow-Headers`("Authorization",
       "Content-Type", "X-Requested-With")
   )
+
   //this directive adds access control headers to normal responses
   private def addAccessControlHeaders: Directive0 = {
     respondWithHeaders(corsResponseHeaders)
   }
+
   //this handles preflight OPTIONS requests.
   private def preflightRequestHandler: Route = options {
     complete(HttpResponse(StatusCodes.OK).
       withHeaders(`Access-Control-Allow-Methods`(OPTIONS, POST, PUT, GET, DELETE)))
   }
+
   // Wrap the Route with this method to enable adding of CORS headers
   def corsHandler(r: Route): Route = addAccessControlHeaders {
     preflightRequestHandler ~ r
   }
+
   // Helper method to add CORS headers to HttpResponse
   // preventing duplication of CORS headers across code
-  def addCORSHeaders(response: HttpResponse):HttpResponse =
+  def addCORSHeaders(response: HttpResponse): HttpResponse =
     response.withHeaders(corsResponseHeaders)
 }

@@ -7,8 +7,8 @@ command
 target
 project/target
 project/.bloop
-test
-testExport
 tmp.csv
 .vscode
 docker/Dockerfile
+idx.*
+memo

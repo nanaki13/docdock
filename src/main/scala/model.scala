@@ -96,7 +96,7 @@ package object model {
       dsl.cont.action_=(s"${WebServer.runPathString.replace("$cmdName", parent.cmd)}")
       dsl.cont.method_=("POST")
       dsl.cont.content = toHtml(cds)
-      if (parent.usageDesc.get.find(_.isImage).nonEmpty) {
+      if (parent.usageDesc.get.exists(_.isImage)) {
         html"input".list_=("images_data").name_=("images")
         val data = html"datalist".id_=("images_data")
         CommandService.getImage.foreach { e =>
@@ -105,7 +105,7 @@ package object model {
         }
       }
 
-      if (parent.usageDesc.get.find(_.isContainer).nonEmpty) {
+      if (parent.usageDesc.get.exists(_.isContainer)) {
         html"input".list_=("containers_data").name_=("containers")
         val data = html"datalist".id_=("containers_data")
         CommandService.getContainer.foreach { e =>
@@ -113,9 +113,14 @@ package object model {
           add"option".value_=(e.id).text_=(e.names)
         }
       }
-      if (parent.usageDesc.get.find(_.isName).nonEmpty) {
+      if (parent.usageDesc.get.exists(_.isName)) {
         html"label"._for("name").text = ("NAME")
         html"input"._type("text").name_=("name")
+      }
+
+      if (parent.usageDesc.get.exists(_.isPath)) {
+        html"label"._for("path").text = ("PATH")
+        html"input"._type("text").name_=("path")
       }
 
       val bt = html"input"
@@ -205,6 +210,7 @@ package object model {
     def haveImage: Boolean = usageDesc.get.map(_.isImage).reduce(_ || _)
     def haveContainer: Boolean = usageDesc.get.map(_.isContainer).reduce(_ || _)
     def haveName: Boolean = usageDesc.get.map(_.isName).reduce(_ || _)
+    def havePath: Boolean = usageDesc.get.map(_.isPath).reduce(_ || _)
     val pb = new ProcessBuilder();
 
     def run: Int = {
@@ -241,8 +247,14 @@ package object model {
           e.map(_.asInstanceOf[ValuedCommandOption[_]]).map {
             op => {
               if (op.isDefined) {
-                println("op.isDefined" + List(op.opt.parsed.long.get, op.v.toString))
-                List(op.opt.parsed.long.get, op.v.toString)
+                if(op.v.toString.isEmpty){
+                  List(op.opt.parsed.long.get)
+                }else{
+                  println("op.isDefined" + List(op.opt.parsed.long.get, op.v.toString))
+                  List(op.opt.parsed.long.get, op.v.toString)
+                }
+
+
               } else {
                 println("op.is not Defined" + List(op.opt.parsed.long.get, op.v.toString))
                 Nil
@@ -255,7 +267,7 @@ package object model {
      val cmd = (base ++ optes) :+ args.arg.toString
       println(cmd)
       memo match {
-        case Some(value) => value.save(cmd.mkString(" "),cmd)
+        case Some(value) => value.saveMemo(cmd.mkString(" "),cmd)
         case None =>
       }
       pb.command(cmd.asJava)
@@ -381,6 +393,7 @@ package object model {
 
     def isImage: Boolean = str.contains("IMAGE")
     def isName: Boolean = str.contains("NAME")
+    def isPath: Boolean = str.contains("PATH")
 
     def cleanString: String = str.replaceFirst("\\[", "").reverse.replaceFirst("\\]", "").reverse
 
